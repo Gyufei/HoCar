@@ -17,15 +17,23 @@ model Bill {
   amount     Decimal  @db.Decimal(10, 2)
   usage      Decimal  @db.Decimal(10, 2)
   unitPrice  Decimal? @db.Decimal(10, 4) @map("unit_price")
+  selfPreviousReading Decimal? @db.Decimal(10, 2) @map("self_previous_reading")
+  selfCurrentReading  Decimal? @db.Decimal(10, 2) @map("self_current_reading")
+  selfUsage           Decimal? @db.Decimal(10, 2) @map("self_usage")
+  selfAmount          Decimal? @db.Decimal(10, 2) @map("self_amount")
+  peerPreviousReading Decimal? @db.Decimal(10, 2) @map("peer_previous_reading")
+  peerCurrentReading  Decimal? @db.Decimal(10, 2) @map("peer_current_reading")
+  peerUsage           Decimal? @db.Decimal(10, 2) @map("peer_usage")
+  peerAmount          Decimal? @db.Decimal(10, 2) @map("peer_amount")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   @@map("bills")
   @@index([userId, year, month, type], name: "idx_bills_user_year_month_type")
+  @@unique([userId, year, month, type], name: "uniq_bills_user_year_month_type")
 }
 
 enum BillType {
   ELE
   WATER
 }
-

@@ -9,6 +9,14 @@ const billCreateSchema = z.object({
   amount: z.number().nonnegative(),
   usage: z.number().nonnegative(),
   unitPrice: z.number().nonnegative().optional(),
+  selfPreviousReading: z.number().nonnegative(),
+  selfCurrentReading: z.number().nonnegative(),
+  selfUsage: z.number().nonnegative(),
+  selfAmount: z.number().nonnegative(),
+  peerPreviousReading: z.number().nonnegative(),
+  peerCurrentReading: z.number().nonnegative(),
+  peerUsage: z.number().nonnegative(),
+  peerAmount: z.number().nonnegative(),
 });
 
 const billQuerySchema = z.object({
@@ -94,21 +102,57 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { type, year, month, amount, usage, unitPrice } = parsed.data;
+  const {
+    type,
+    year,
+    month,
+    amount,
+    usage,
+    unitPrice,
+    selfPreviousReading,
+    selfCurrentReading,
+    selfUsage,
+    selfAmount,
+    peerPreviousReading,
+    peerCurrentReading,
+    peerUsage,
+    peerAmount,
+  } = parsed.data;
 
   try {
     const userId = getUserIdFromEnv();
 
-    const bill = await prisma.bill.create({
-      data: {
+    const billData = {
+      amount,
+      usage,
+      unitPrice: unitPrice ?? null,
+      selfPreviousReading,
+      selfCurrentReading,
+      selfUsage,
+      selfAmount,
+      peerPreviousReading,
+      peerCurrentReading,
+      peerUsage,
+      peerAmount,
+    };
+
+    const bill = await prisma.bill.upsert({
+      where: {
+        uniq_bills_user_year_month_type: {
+          userId,
+          year,
+          month,
+          type,
+        },
+      },
+      create: {
         userId,
         type,
         year,
         month,
-        amount,
-        usage,
-        unitPrice: unitPrice ?? null,
+        ...billData,
       },
+      update: billData,
     });
 
     return NextResponse.json({ success: true, data: bill }, { status: 201 });
@@ -120,4 +164,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

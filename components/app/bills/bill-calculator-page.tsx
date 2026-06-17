@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Calculator, RotateCcw, Save, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Calculator, RotateCcw, Trash2 } from "lucide-react";
 
 import { PageHeader } from "@/components/app/page-header";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-type BillType = "ELE" | "WATER";
+import {
+  buildBillRecordPayload,
+  findPreviousBillReadings,
+  type BillRecordPayload,
+  type BillType,
+} from "@/lib/bills/record-payload";
 
 type BillKindConfig = {
   type: BillType;
@@ -34,11 +38,6 @@ type BillKindConfig = {
   usageUnit: string;
 };
 
-type StoredReadings = {
-  userALastCurrent?: number;
-  userBLastCurrent?: number;
-};
-
 type Results = {
   billA: number;
   billB: number;
@@ -53,6 +52,15 @@ type BillRecord = {
   month: number;
   amount: number;
   usage: number;
+  unitPrice: number | null;
+  selfPreviousReading: number | null;
+  selfCurrentReading: number | null;
+  selfUsage: number | null;
+  selfAmount: number | null;
+  peerPreviousReading: number | null;
+  peerCurrentReading: number | null;
+  peerUsage: number | null;
+  peerAmount: number | null;
   createdAt: string;
 };
 
@@ -62,6 +70,15 @@ type BillApiItem = {
   month: number;
   amount: string | number;
   usage: string | number;
+  unitPrice?: string | number | null;
+  selfPreviousReading?: string | number | null;
+  selfCurrentReading?: string | number | null;
+  selfUsage?: string | number | null;
+  selfAmount?: string | number | null;
+  peerPreviousReading?: string | number | null;
+  peerCurrentReading?: string | number | null;
+  peerUsage?: string | number | null;
+  peerAmount?: string | number | null;
   createdAt: string;
 };
 
@@ -91,29 +108,40 @@ function isBillListResponse(value: unknown): value is { success: true; data: Bil
   return record.success === true && Array.isArray(record.data);
 }
 
-function readStoredReadings(storageKey: string): StoredReadings {
-  if (typeof window === "undefined") {
-    return {};
-  }
-
-  const stored = window.localStorage.getItem(storageKey);
-  if (!stored) {
-    return {};
-  }
-
-  try {
-    return JSON.parse(stored) as StoredReadings;
-  } catch {
-    return {};
-  }
-}
-
 function toAmount(value: string) {
   return Number.parseFloat(value) || 0;
 }
 
+function toNullableNumber(value: string | number | null | undefined) {
+  if (value == null) {
+    return null;
+  }
+
+  return Number(value);
+}
+
 function formatCurrency(value: number) {
   return value.toFixed(2);
+}
+
+function formatNullableCurrency(value: number | null) {
+  return value == null ? "未记录" : `¥${formatCurrency(value)}`;
+}
+
+function formatNullableUsage(value: number | null, unit: string) {
+  return value == null ? "未记录" : `${value} ${unit}`;
+}
+
+function formatReadingRange(
+  previous: number | null,
+  current: number | null,
+  unit: string,
+) {
+  if (previous == null || current == null) {
+    return "未记录";
+  }
+
+  return `${previous} → ${current} ${unit}`;
 }
 
 function formatDate(value: string) {
@@ -129,6 +157,26 @@ function formatDate(value: string) {
   });
 }
 
+function mapBillApiItem(item: BillApiItem): BillRecord {
+  return {
+    id: item.id,
+    year: item.year,
+    month: item.month,
+    amount: Number(item.amount),
+    usage: Number(item.usage),
+    unitPrice: toNullableNumber(item.unitPrice),
+    selfPreviousReading: toNullableNumber(item.selfPreviousReading),
+    selfCurrentReading: toNullableNumber(item.selfCurrentReading),
+    selfUsage: toNullableNumber(item.selfUsage),
+    selfAmount: toNullableNumber(item.selfAmount),
+    peerPreviousReading: toNullableNumber(item.peerPreviousReading),
+    peerCurrentReading: toNullableNumber(item.peerCurrentReading),
+    peerUsage: toNullableNumber(item.peerUsage),
+    peerAmount: toNullableNumber(item.peerAmount),
+    createdAt: item.createdAt,
+  };
+}
+
 export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
   const [userACurrent, setUserACurrent] = useState("");
   const [userAPrevious, setUserAPrevious] = useState("");
@@ -140,40 +188,71 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
   const [month, setMonth] = useState(() => new Date().getMonth() + 1);
   const [saving, setSaving] = useState(false);
   const [savingError, setSavingError] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [history, setHistory] = useState<BillRecord[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
 
-  const totalUsageFromResults = useMemo(
-    () => (results ? results.totalUsage : 0),
-    [results],
-  );
-
   useEffect(() => {
-    const readings = readStoredReadings(config.storageKey);
-    if (readings.userALastCurrent != null) {
-      setUserAPrevious(String(readings.userALastCurrent));
-    }
-    if (readings.userBLastCurrent != null) {
-      setUserBPrevious(String(readings.userBLastCurrent));
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(config.storageKey);
     }
   }, [config.storageKey]);
 
-  const saveReadings = useCallback(() => {
-    if (typeof window === "undefined") return;
+  const loadHistory = useCallback(async () => {
+    try {
+      setLoadingHistory(true);
+      setHistoryError(null);
+      const res = await fetch(`/api/bills?type=${config.type}`);
+      if (!res.ok) {
+        throw new Error("加载历史记录失败");
+      }
+      const data: unknown = await res.json();
+      if (!isBillListResponse(data)) {
+        throw new Error("加载历史记录失败");
+      }
 
-    const readings = {
-      userALastCurrent: toAmount(userACurrent),
-      userBLastCurrent: toAmount(userBCurrent),
-      timestamp: new Date().toISOString(),
-    };
+      const records = data.data.filter(isBillApiItem).map(mapBillApiItem);
+      setHistory(records);
 
-    window.localStorage.setItem(config.storageKey, JSON.stringify(readings));
-  }, [config.storageKey, userACurrent, userBCurrent]);
+      const previousReadings = findPreviousBillReadings(records, year, month);
+      if (previousReadings) {
+        setUserAPrevious(String(previousReadings.selfPreviousReading));
+        setUserBPrevious(String(previousReadings.peerPreviousReading));
+      }
+    } catch (error) {
+      console.error(error);
+      setHistoryError("加载历史记录失败，请稍后重试。");
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, [config.type, month, year]);
 
-  const calculateBills = useCallback(() => {
+  const saveBillRecord = useCallback(async (payload: BillRecordPayload) => {
+    const res = await fetch("/api/bills", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      throw new Error("保存失败");
+    }
+
+    const data = (await res.json()) as { success?: boolean };
+    if (!data.success) {
+      throw new Error("保存失败");
+    }
+  }, []);
+
+  const calculateBills = useCallback(async () => {
     setFormError(null);
+    setSavingError(null);
+    setSaveStatus(null);
+
     const userACurrentNum = toAmount(userACurrent);
     const userAPreviousNum = toAmount(userAPrevious);
     const userBCurrentNum = toAmount(userBCurrent);
@@ -193,35 +272,57 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
       return;
     }
 
-    const usageA = userACurrentNum - userAPreviousNum;
-    const usageB = userBCurrentNum - userBPreviousNum;
-    const totalUsage = usageA + usageB;
-
-    if (totalUsage === 0) {
+    let payload: BillRecordPayload;
+    try {
+      payload = buildBillRecordPayload({
+        type: config.type,
+        year,
+        month,
+        selfPreviousReading: userAPreviousNum,
+        selfCurrentReading: userACurrentNum,
+        peerPreviousReading: userBPreviousNum,
+        peerCurrentReading: userBCurrentNum,
+        totalAmount: totalBillNum,
+      });
+    } catch {
       setFormError(config.zeroUsageError);
       return;
     }
 
     setResults({
-      billA: (usageA / totalUsage) * totalBillNum,
-      billB: (usageB / totalUsage) * totalBillNum,
-      usageA,
-      usageB,
-      totalUsage,
+      billA: payload.selfAmount,
+      billB: payload.peerAmount,
+      usageA: payload.selfUsage,
+      usageB: payload.peerUsage,
+      totalUsage: payload.usage,
     });
 
-    saveReadings();
+    setSaving(true);
+    try {
+      await saveBillRecord(payload);
+      await loadHistory();
+      setSaveStatus("已保存或更新当月记录。");
+    } catch (error) {
+      console.error(error);
+      setSavingError("保存失败，请稍后重试。");
+    } finally {
+      setSaving(false);
+    }
   }, [
     config.amountError,
     config.currentAError,
     config.currentBError,
+    config.type,
     config.zeroUsageError,
-    saveReadings,
+    loadHistory,
+    month,
+    saveBillRecord,
     totalBill,
     userACurrent,
     userAPrevious,
     userBCurrent,
     userBPrevious,
+    year,
   ]);
 
   const resetForm = useCallback(() => {
@@ -232,53 +333,15 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
     setTotalBill("");
     setResults(null);
     setFormError(null);
+    setSavingError(null);
+    setSaveStatus(null);
 
-    if (typeof window === "undefined") return;
-
-    if (window.confirm("是否同时清除浏览器中保存的上次读数记录？")) {
-      window.localStorage.removeItem(config.storageKey);
-      return;
+    const previousReadings = findPreviousBillReadings(history, year, month);
+    if (previousReadings) {
+      setUserAPrevious(String(previousReadings.selfPreviousReading));
+      setUserBPrevious(String(previousReadings.peerPreviousReading));
     }
-
-    const readings = readStoredReadings(config.storageKey);
-    if (readings.userALastCurrent != null) {
-      setUserAPrevious(String(readings.userALastCurrent));
-    }
-    if (readings.userBLastCurrent != null) {
-      setUserBPrevious(String(readings.userBLastCurrent));
-    }
-  }, [config.storageKey]);
-
-  const loadHistory = useCallback(async () => {
-    try {
-      setLoadingHistory(true);
-      setHistoryError(null);
-      const res = await fetch(`/api/bills?type=${config.type}`);
-      if (!res.ok) {
-        throw new Error("加载历史记录失败");
-      }
-      const data: unknown = await res.json();
-      if (!isBillListResponse(data)) {
-        throw new Error("加载历史记录失败");
-      }
-
-      setHistory(
-        data.data.filter(isBillApiItem).map((item) => ({
-          id: item.id,
-          year: item.year,
-          month: item.month,
-          amount: Number(item.amount),
-          usage: Number(item.usage),
-          createdAt: item.createdAt,
-        })),
-      );
-    } catch (error) {
-      console.error(error);
-      setHistoryError("加载历史记录失败，请稍后重试。");
-    } finally {
-      setLoadingHistory(false);
-    }
-  }, [config.type]);
+  }, [history, month, year]);
 
   useEffect(() => {
     void loadHistory();
@@ -288,84 +351,12 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
     if (typeof window === "undefined") return;
     const handler = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
-        calculateBills();
+        void calculateBills();
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [calculateBills]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const handler = () => {
-      const userACurrentNum = Number.parseFloat(userACurrent);
-      const userBCurrentNum = Number.parseFloat(userBCurrent);
-
-      if (
-        !Number.isNaN(userACurrentNum) ||
-        !Number.isNaN(userBCurrentNum)
-      ) {
-        saveReadings();
-      }
-    };
-    window.addEventListener("beforeunload", handler);
-    return () => window.removeEventListener("beforeunload", handler);
-  }, [saveReadings, userACurrent, userBCurrent]);
-
-  const handleSaveBill = useCallback(async () => {
-    if (!results) {
-      setSavingError("请先完成一次计算，再保存记录。");
-      return;
-    }
-
-    const amountNum = toAmount(totalBill);
-    if (amountNum <= 0 || totalUsageFromResults <= 0) {
-      setSavingError("总金额或总用量不合法，无法保存。");
-      return;
-    }
-
-    setSaving(true);
-    setSavingError(null);
-    try {
-      const res = await fetch("/api/bills", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          type: config.type,
-          year,
-          month,
-          amount: amountNum,
-          usage: totalUsageFromResults,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("保存失败");
-      }
-
-      const data = (await res.json()) as { success?: boolean };
-      if (!data.success) {
-        throw new Error("保存失败");
-      }
-
-      await loadHistory();
-    } catch (error) {
-      console.error(error);
-      setSavingError("保存失败，请稍后重试。");
-    } finally {
-      setSaving(false);
-    }
-  }, [
-    config.type,
-    loadHistory,
-    month,
-    results,
-    totalBill,
-    totalUsageFromResults,
-    year,
-  ]);
 
   const handleDelete = useCallback(
     async (id: string) => {
@@ -403,7 +394,7 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
             <CardHeader>
               <CardTitle>读数与金额</CardTitle>
               <CardDescription>
-                输入双方本次和上次读数，系统会按用量比例拆分金额。
+                输入双方本次和上次读数，点击计算后会自动保存或更新当月记录。
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
@@ -467,9 +458,13 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
               ) : null}
 
               <div className="flex flex-col gap-2 sm:flex-row">
-                <Button type="button" onClick={calculateBills}>
+                <Button
+                  type="button"
+                  disabled={saving}
+                  onClick={() => void calculateBills()}
+                >
                   <Calculator className="size-4" />
-                  计算
+                  {saving ? "正在保存..." : "计算并保存"}
                 </Button>
                 <Button type="button" variant="outline" onClick={resetForm}>
                   <RotateCcw className="size-4" />
@@ -493,16 +488,22 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
                 <div className="text-sm text-muted-foreground">正在加载...</div>
               ) : history.length === 0 ? (
                 <div className="rounded-lg border border-dashed bg-muted/30 px-4 py-8 text-center text-sm text-muted-foreground">
-                  暂无记录。完成计算后可以保存到这里。
+                  暂无记录。完成计算后会自动保存到这里。
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[560px] text-sm">
+                  <table className="w-full min-w-[1120px] text-sm">
                     <thead className="border-b text-left text-muted-foreground">
                       <tr>
                         <th className="py-2 pr-4 font-medium">月份</th>
-                        <th className="py-2 pr-4 font-medium">金额</th>
-                        <th className="py-2 pr-4 font-medium">用量</th>
+                        <th className="py-2 pr-4 font-medium">总金额</th>
+                        <th className="py-2 pr-4 font-medium">总用量</th>
+                        <th className="py-2 pr-4 font-medium">我家读数</th>
+                        <th className="py-2 pr-4 font-medium">我家用量</th>
+                        <th className="py-2 pr-4 font-medium">我家费用</th>
+                        <th className="py-2 pr-4 font-medium">对家读数</th>
+                        <th className="py-2 pr-4 font-medium">对家用量</th>
+                        <th className="py-2 pr-4 font-medium">对家费用</th>
                         <th className="py-2 pr-4 font-medium">保存时间</th>
                         <th className="py-2 text-right font-medium">操作</th>
                       </tr>
@@ -518,6 +519,32 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
                           </td>
                           <td className="py-3 pr-4">
                             {item.usage} {config.usageUnit}
+                          </td>
+                          <td className="py-3 pr-4">
+                            {formatReadingRange(
+                              item.selfPreviousReading,
+                              item.selfCurrentReading,
+                              config.usageUnit,
+                            )}
+                          </td>
+                          <td className="py-3 pr-4">
+                            {formatNullableUsage(item.selfUsage, config.usageUnit)}
+                          </td>
+                          <td className="py-3 pr-4">
+                            {formatNullableCurrency(item.selfAmount)}
+                          </td>
+                          <td className="py-3 pr-4">
+                            {formatReadingRange(
+                              item.peerPreviousReading,
+                              item.peerCurrentReading,
+                              config.usageUnit,
+                            )}
+                          </td>
+                          <td className="py-3 pr-4">
+                            {formatNullableUsage(item.peerUsage, config.usageUnit)}
+                          </td>
+                          <td className="py-3 pr-4">
+                            {formatNullableCurrency(item.peerAmount)}
                           </td>
                           <td className="py-3 pr-4 text-muted-foreground">
                             {formatDate(item.createdAt)}
@@ -547,7 +574,7 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
           <Card>
             <CardHeader>
               <CardTitle>计算结果</CardTitle>
-              <CardDescription>计算后可保存为本月记录。</CardDescription>
+              <CardDescription>计算后会保存为当月记录。</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {results ? (
@@ -586,19 +613,15 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
                       {savingError}
                     </div>
                   ) : null}
-                  <Button
-                    type="button"
-                    className="w-full"
-                    disabled={saving}
-                    onClick={() => void handleSaveBill()}
-                  >
-                    <Save className="size-4" />
-                    {saving ? "正在保存..." : "保存记录"}
-                  </Button>
+                  {saveStatus ? (
+                    <div className="rounded-lg border border-primary/20 bg-primary/10 px-3 py-2 text-sm text-primary">
+                      {saveStatus}
+                    </div>
+                  ) : null}
                 </>
               ) : (
                 <div className="rounded-lg border border-dashed bg-muted/30 px-4 py-8 text-center text-sm text-muted-foreground">
-                  输入读数并点击计算后，结果会显示在这里。
+                  输入读数并点击计算后，结果会显示在这里，并自动保存当月记录。
                 </div>
               )}
             </CardContent>
