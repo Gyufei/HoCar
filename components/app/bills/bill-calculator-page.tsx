@@ -131,19 +131,9 @@ function formatDate(value: string) {
 
 export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
   const [userACurrent, setUserACurrent] = useState("");
-  const [userAPrevious, setUserAPrevious] = useState(() => {
-    const readings = readStoredReadings(config.storageKey);
-    return readings.userALastCurrent != null
-      ? String(readings.userALastCurrent)
-      : "";
-  });
+  const [userAPrevious, setUserAPrevious] = useState("");
   const [userBCurrent, setUserBCurrent] = useState("");
-  const [userBPrevious, setUserBPrevious] = useState(() => {
-    const readings = readStoredReadings(config.storageKey);
-    return readings.userBLastCurrent != null
-      ? String(readings.userBLastCurrent)
-      : "";
-  });
+  const [userBPrevious, setUserBPrevious] = useState("");
   const [totalBill, setTotalBill] = useState("");
   const [results, setResults] = useState<Results>(null);
   const [year, setYear] = useState(() => new Date().getFullYear());
@@ -159,6 +149,16 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
     () => (results ? results.totalUsage : 0),
     [results],
   );
+
+  useEffect(() => {
+    const readings = readStoredReadings(config.storageKey);
+    if (readings.userALastCurrent != null) {
+      setUserAPrevious(String(readings.userALastCurrent));
+    }
+    if (readings.userBLastCurrent != null) {
+      setUserBPrevious(String(readings.userBLastCurrent));
+    }
+  }, [config.storageKey]);
 
   const saveReadings = useCallback(() => {
     if (typeof window === "undefined") return;
