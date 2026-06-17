@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Home Calc",
-  description: "Calc Home electricity fees and water fees",
+  title: "Personal Hub",
+  description: "A lightweight personal admin platform",
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-[#05060A] flex items-center justify-center p-5`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-dvh bg-background font-sans antialiased`}
       >
         <Providers>{children}</Providers>
       </body>
