@@ -34,12 +34,16 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon" variant="sidebar">
-      <SidebarHeader className="border-b border-sidebar-border px-3 py-3">
+    <Sidebar
+      collapsible="icon"
+      variant="sidebar"
+      className="sidebar-glass border-y-0 md:border-r md:border-l-0 md:border-border/40"
+    >
+      <SidebarHeader className="h-[60px] justify-center border-b border-border/40 px-3 py-3">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" tooltip="Personal Hub" render={<Link href="/" />}>
-              <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <div className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary ring-1 ring-primary/15">
                 <Sparkles className="size-4" />
               </div>
               <div className="grid min-w-0 flex-1 text-left text-sm leading-tight">
@@ -84,10 +88,10 @@ export function AppSidebar() {
 
       <SidebarSeparator />
 
-      <SidebarFooter className="p-3">
+      <SidebarFooter className="border-t border-border/40 bg-muted/10 p-3 backdrop-blur-sm">
         <Button
           type="button"
-          variant="ghost"
+          variant="destructive"
           className="w-full justify-start text-sidebar-foreground"
           onClick={() => void signOut({ callbackUrl: "/login" })}
         >

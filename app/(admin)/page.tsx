@@ -22,7 +22,7 @@ export default function DashboardPage() {
       />
 
       <section className="grid gap-4 md:grid-cols-3">
-        <Card>
+        <Card hover>
           <CardHeader>
             <CardDescription>当前平台</CardDescription>
             <CardTitle className="text-xl">Personal Hub</CardTitle>
@@ -31,7 +31,7 @@ export default function DashboardPage() {
             先从生活账单开始，后续逐步接入你的个人服务。
           </CardContent>
         </Card>
-        <Card>
+        <Card hover>
           <CardHeader>
             <CardDescription>已接入模块</CardDescription>
             <CardTitle className="text-xl">生活账单</CardTitle>
@@ -40,7 +40,7 @@ export default function DashboardPage() {
             电费和水费计算、保存、历史记录仍然可用。
           </CardContent>
         </Card>
-        <Card>
+        <Card hover>
           <CardHeader>
             <CardDescription>预留模块</CardDescription>
             <CardTitle className="text-xl">图床 / Demo</CardTitle>

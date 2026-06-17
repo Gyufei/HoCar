@@ -23,10 +23,10 @@ export function ModuleCard({
 }: ModuleCardProps) {
   return (
     <Link href={href} className="group block cursor-pointer">
-      <Card className="h-full transition-colors hover:border-primary/40 hover:bg-muted/30">
+      <Card hover className="h-full">
         <CardHeader>
           <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <div className="flex size-10 items-center justify-center rounded-md bg-primary/10 text-primary ring-1 ring-primary/15">
               <Icon className="size-5" />
             </div>
             <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />

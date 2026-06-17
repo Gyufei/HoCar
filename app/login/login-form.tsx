@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { LockKeyhole } from "lucide-react";
 
+import { BackgroundGradient } from "@/components/app/background-gradient";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -49,16 +50,17 @@ export default function LoginForm() {
   };
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.10),transparent_32%),linear-gradient(180deg,#ffffff_0%,#f7f7f8_100%)] px-4 py-10">
-      <div className="w-full max-w-md">
+    <main className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-10">
+      <BackgroundGradient />
+      <div className="relative z-10 w-full max-w-md">
         <div className="mb-6 flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <span className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary ring-1 ring-primary/15">
             <LockKeyhole className="size-4" />
           </span>
           Personal Hub
         </div>
 
-        <Card className="shadow-sm">
+        <Card>
           <CardHeader className="text-center">
             <CardTitle className="text-xl">登录你的个人管理台</CardTitle>
             <CardDescription>
@@ -94,7 +96,7 @@ export default function LoginForm() {
 
               {error ? (
                 <div
-                  className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                  className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
                   role="alert"
                 >
                   {error}
