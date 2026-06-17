@@ -6,6 +6,14 @@ const billUpdateSchema = z.object({
   amount: z.number().nonnegative().optional(),
   usage: z.number().nonnegative().optional(),
   unitPrice: z.number().nonnegative().optional().nullable(),
+  selfPreviousReading: z.number().nonnegative().optional(),
+  selfCurrentReading: z.number().nonnegative().optional(),
+  selfUsage: z.number().nonnegative().optional(),
+  selfAmount: z.number().nonnegative().optional(),
+  peerPreviousReading: z.number().nonnegative().optional(),
+  peerCurrentReading: z.number().nonnegative().optional(),
+  peerUsage: z.number().nonnegative().optional(),
+  peerAmount: z.number().nonnegative().optional(),
   year: z.number().int().min(2000).max(2100).optional(),
   month: z.number().int().min(1).max(12).optional(),
 });
@@ -102,4 +110,3 @@ export async function DELETE(
     );
   }
 }
-

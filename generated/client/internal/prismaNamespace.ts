@@ -526,6 +526,14 @@ export const BillScalarFieldEnum = {
   amount: 'amount',
   usage: 'usage',
   unitPrice: 'unitPrice',
+  selfPreviousReading: 'selfPreviousReading',
+  selfCurrentReading: 'selfCurrentReading',
+  selfUsage: 'selfUsage',
+  selfAmount: 'selfAmount',
+  peerPreviousReading: 'peerPreviousReading',
+  peerCurrentReading: 'peerCurrentReading',
+  peerUsage: 'peerUsage',
+  peerAmount: 'peerAmount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -32,6 +32,14 @@ export type BillAvgAggregateOutputType = {
   amount: runtime.Decimal | null
   usage: runtime.Decimal | null
   unitPrice: runtime.Decimal | null
+  selfPreviousReading: runtime.Decimal | null
+  selfCurrentReading: runtime.Decimal | null
+  selfUsage: runtime.Decimal | null
+  selfAmount: runtime.Decimal | null
+  peerPreviousReading: runtime.Decimal | null
+  peerCurrentReading: runtime.Decimal | null
+  peerUsage: runtime.Decimal | null
+  peerAmount: runtime.Decimal | null
 }
 
 export type BillSumAggregateOutputType = {
@@ -40,6 +48,14 @@ export type BillSumAggregateOutputType = {
   amount: runtime.Decimal | null
   usage: runtime.Decimal | null
   unitPrice: runtime.Decimal | null
+  selfPreviousReading: runtime.Decimal | null
+  selfCurrentReading: runtime.Decimal | null
+  selfUsage: runtime.Decimal | null
+  selfAmount: runtime.Decimal | null
+  peerPreviousReading: runtime.Decimal | null
+  peerCurrentReading: runtime.Decimal | null
+  peerUsage: runtime.Decimal | null
+  peerAmount: runtime.Decimal | null
 }
 
 export type BillMinAggregateOutputType = {
@@ -51,6 +67,14 @@ export type BillMinAggregateOutputType = {
   amount: runtime.Decimal | null
   usage: runtime.Decimal | null
   unitPrice: runtime.Decimal | null
+  selfPreviousReading: runtime.Decimal | null
+  selfCurrentReading: runtime.Decimal | null
+  selfUsage: runtime.Decimal | null
+  selfAmount: runtime.Decimal | null
+  peerPreviousReading: runtime.Decimal | null
+  peerCurrentReading: runtime.Decimal | null
+  peerUsage: runtime.Decimal | null
+  peerAmount: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -64,6 +88,14 @@ export type BillMaxAggregateOutputType = {
   amount: runtime.Decimal | null
   usage: runtime.Decimal | null
   unitPrice: runtime.Decimal | null
+  selfPreviousReading: runtime.Decimal | null
+  selfCurrentReading: runtime.Decimal | null
+  selfUsage: runtime.Decimal | null
+  selfAmount: runtime.Decimal | null
+  peerPreviousReading: runtime.Decimal | null
+  peerCurrentReading: runtime.Decimal | null
+  peerUsage: runtime.Decimal | null
+  peerAmount: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -77,6 +109,14 @@ export type BillCountAggregateOutputType = {
   amount: number
   usage: number
   unitPrice: number
+  selfPreviousReading: number
+  selfCurrentReading: number
+  selfUsage: number
+  selfAmount: number
+  peerPreviousReading: number
+  peerCurrentReading: number
+  peerUsage: number
+  peerAmount: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -89,6 +129,14 @@ export type BillAvgAggregateInputType = {
   amount?: true
   usage?: true
   unitPrice?: true
+  selfPreviousReading?: true
+  selfCurrentReading?: true
+  selfUsage?: true
+  selfAmount?: true
+  peerPreviousReading?: true
+  peerCurrentReading?: true
+  peerUsage?: true
+  peerAmount?: true
 }
 
 export type BillSumAggregateInputType = {
@@ -97,6 +145,14 @@ export type BillSumAggregateInputType = {
   amount?: true
   usage?: true
   unitPrice?: true
+  selfPreviousReading?: true
+  selfCurrentReading?: true
+  selfUsage?: true
+  selfAmount?: true
+  peerPreviousReading?: true
+  peerCurrentReading?: true
+  peerUsage?: true
+  peerAmount?: true
 }
 
 export type BillMinAggregateInputType = {
@@ -108,6 +164,14 @@ export type BillMinAggregateInputType = {
   amount?: true
   usage?: true
   unitPrice?: true
+  selfPreviousReading?: true
+  selfCurrentReading?: true
+  selfUsage?: true
+  selfAmount?: true
+  peerPreviousReading?: true
+  peerCurrentReading?: true
+  peerUsage?: true
+  peerAmount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -121,6 +185,14 @@ export type BillMaxAggregateInputType = {
   amount?: true
   usage?: true
   unitPrice?: true
+  selfPreviousReading?: true
+  selfCurrentReading?: true
+  selfUsage?: true
+  selfAmount?: true
+  peerPreviousReading?: true
+  peerCurrentReading?: true
+  peerUsage?: true
+  peerAmount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -134,6 +206,14 @@ export type BillCountAggregateInputType = {
   amount?: true
   usage?: true
   unitPrice?: true
+  selfPreviousReading?: true
+  selfCurrentReading?: true
+  selfUsage?: true
+  selfAmount?: true
+  peerPreviousReading?: true
+  peerCurrentReading?: true
+  peerUsage?: true
+  peerAmount?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -234,6 +314,14 @@ export type BillGroupByOutputType = {
   amount: runtime.Decimal
   usage: runtime.Decimal
   unitPrice: runtime.Decimal | null
+  selfPreviousReading: runtime.Decimal | null
+  selfCurrentReading: runtime.Decimal | null
+  selfUsage: runtime.Decimal | null
+  selfAmount: runtime.Decimal | null
+  peerPreviousReading: runtime.Decimal | null
+  peerCurrentReading: runtime.Decimal | null
+  peerUsage: runtime.Decimal | null
+  peerAmount: runtime.Decimal | null
   createdAt: Date
   updatedAt: Date
   _count: BillCountAggregateOutputType | null
@@ -270,6 +358,14 @@ export type BillWhereInput = {
   amount?: Prisma.DecimalFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   usage?: Prisma.DecimalFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   unitPrice?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfPreviousReading?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfCurrentReading?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfUsage?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfAmount?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerPreviousReading?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerCurrentReading?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerUsage?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerAmount?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFilter<"Bill"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bill"> | Date | string
 }
@@ -283,12 +379,21 @@ export type BillOrderByWithRelationInput = {
   amount?: Prisma.SortOrder
   usage?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  selfPreviousReading?: Prisma.SortOrderInput | Prisma.SortOrder
+  selfCurrentReading?: Prisma.SortOrderInput | Prisma.SortOrder
+  selfUsage?: Prisma.SortOrderInput | Prisma.SortOrder
+  selfAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  peerPreviousReading?: Prisma.SortOrderInput | Prisma.SortOrder
+  peerCurrentReading?: Prisma.SortOrderInput | Prisma.SortOrder
+  peerUsage?: Prisma.SortOrderInput | Prisma.SortOrder
+  peerAmount?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type BillWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  uniq_bills_user_year_month_type?: Prisma.BillUniq_bills_user_year_month_typeCompoundUniqueInput
   AND?: Prisma.BillWhereInput | Prisma.BillWhereInput[]
   OR?: Prisma.BillWhereInput[]
   NOT?: Prisma.BillWhereInput | Prisma.BillWhereInput[]
@@ -299,9 +404,17 @@ export type BillWhereUniqueInput = Prisma.AtLeast<{
   amount?: Prisma.DecimalFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   usage?: Prisma.DecimalFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   unitPrice?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfPreviousReading?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfCurrentReading?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfUsage?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfAmount?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerPreviousReading?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerCurrentReading?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerUsage?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerAmount?: Prisma.DecimalNullableFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFilter<"Bill"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bill"> | Date | string
-}, "id">
+}, "id" | "uniq_bills_user_year_month_type">
 
 export type BillOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -312,6 +425,14 @@ export type BillOrderByWithAggregationInput = {
   amount?: Prisma.SortOrder
   usage?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  selfPreviousReading?: Prisma.SortOrderInput | Prisma.SortOrder
+  selfCurrentReading?: Prisma.SortOrderInput | Prisma.SortOrder
+  selfUsage?: Prisma.SortOrderInput | Prisma.SortOrder
+  selfAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  peerPreviousReading?: Prisma.SortOrderInput | Prisma.SortOrder
+  peerCurrentReading?: Prisma.SortOrderInput | Prisma.SortOrder
+  peerUsage?: Prisma.SortOrderInput | Prisma.SortOrder
+  peerAmount?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BillCountOrderByAggregateInput
@@ -333,6 +454,14 @@ export type BillScalarWhereWithAggregatesInput = {
   amount?: Prisma.DecimalWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   usage?: Prisma.DecimalWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   unitPrice?: Prisma.DecimalNullableWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfPreviousReading?: Prisma.DecimalNullableWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfCurrentReading?: Prisma.DecimalNullableWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfUsage?: Prisma.DecimalNullableWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfAmount?: Prisma.DecimalNullableWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerPreviousReading?: Prisma.DecimalNullableWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerCurrentReading?: Prisma.DecimalNullableWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerUsage?: Prisma.DecimalNullableWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerAmount?: Prisma.DecimalNullableWithAggregatesFilter<"Bill"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Bill"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Bill"> | Date | string
 }
@@ -346,6 +475,14 @@ export type BillCreateInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   usage: runtime.Decimal | runtime.DecimalJsLike | number | string
   unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfPreviousReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfCurrentReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfUsage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerPreviousReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerCurrentReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerUsage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -359,6 +496,14 @@ export type BillUncheckedCreateInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   usage: runtime.Decimal | runtime.DecimalJsLike | number | string
   unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfPreviousReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfCurrentReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfUsage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerPreviousReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerCurrentReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerUsage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -372,6 +517,14 @@ export type BillUpdateInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   usage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfPreviousReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfCurrentReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfUsage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerPreviousReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerCurrentReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerUsage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -385,6 +538,14 @@ export type BillUncheckedUpdateInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   usage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfPreviousReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfCurrentReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfUsage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerPreviousReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerCurrentReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerUsage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -398,6 +559,14 @@ export type BillCreateManyInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   usage: runtime.Decimal | runtime.DecimalJsLike | number | string
   unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfPreviousReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfCurrentReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfUsage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerPreviousReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerCurrentReading?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerUsage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -411,6 +580,14 @@ export type BillUpdateManyMutationInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   usage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfPreviousReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfCurrentReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfUsage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerPreviousReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerCurrentReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerUsage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -424,8 +601,23 @@ export type BillUncheckedUpdateManyInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   usage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfPreviousReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfCurrentReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfUsage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  selfAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerPreviousReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerCurrentReading?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerUsage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  peerAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BillUniq_bills_user_year_month_typeCompoundUniqueInput = {
+  userId: string
+  year: number
+  month: number
+  type: $Enums.BillType
 }
 
 export type BillCountOrderByAggregateInput = {
@@ -437,6 +629,14 @@ export type BillCountOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   usage?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  selfPreviousReading?: Prisma.SortOrder
+  selfCurrentReading?: Prisma.SortOrder
+  selfUsage?: Prisma.SortOrder
+  selfAmount?: Prisma.SortOrder
+  peerPreviousReading?: Prisma.SortOrder
+  peerCurrentReading?: Prisma.SortOrder
+  peerUsage?: Prisma.SortOrder
+  peerAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -447,6 +647,14 @@ export type BillAvgOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   usage?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  selfPreviousReading?: Prisma.SortOrder
+  selfCurrentReading?: Prisma.SortOrder
+  selfUsage?: Prisma.SortOrder
+  selfAmount?: Prisma.SortOrder
+  peerPreviousReading?: Prisma.SortOrder
+  peerCurrentReading?: Prisma.SortOrder
+  peerUsage?: Prisma.SortOrder
+  peerAmount?: Prisma.SortOrder
 }
 
 export type BillMaxOrderByAggregateInput = {
@@ -458,6 +666,14 @@ export type BillMaxOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   usage?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  selfPreviousReading?: Prisma.SortOrder
+  selfCurrentReading?: Prisma.SortOrder
+  selfUsage?: Prisma.SortOrder
+  selfAmount?: Prisma.SortOrder
+  peerPreviousReading?: Prisma.SortOrder
+  peerCurrentReading?: Prisma.SortOrder
+  peerUsage?: Prisma.SortOrder
+  peerAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -471,6 +687,14 @@ export type BillMinOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   usage?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  selfPreviousReading?: Prisma.SortOrder
+  selfCurrentReading?: Prisma.SortOrder
+  selfUsage?: Prisma.SortOrder
+  selfAmount?: Prisma.SortOrder
+  peerPreviousReading?: Prisma.SortOrder
+  peerCurrentReading?: Prisma.SortOrder
+  peerUsage?: Prisma.SortOrder
+  peerAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -481,6 +705,14 @@ export type BillSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   usage?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  selfPreviousReading?: Prisma.SortOrder
+  selfCurrentReading?: Prisma.SortOrder
+  selfUsage?: Prisma.SortOrder
+  selfAmount?: Prisma.SortOrder
+  peerPreviousReading?: Prisma.SortOrder
+  peerCurrentReading?: Prisma.SortOrder
+  peerUsage?: Prisma.SortOrder
+  peerAmount?: Prisma.SortOrder
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -530,6 +762,14 @@ export type BillSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   amount?: boolean
   usage?: boolean
   unitPrice?: boolean
+  selfPreviousReading?: boolean
+  selfCurrentReading?: boolean
+  selfUsage?: boolean
+  selfAmount?: boolean
+  peerPreviousReading?: boolean
+  peerCurrentReading?: boolean
+  peerUsage?: boolean
+  peerAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["bill"]>
@@ -543,6 +783,14 @@ export type BillSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   amount?: boolean
   usage?: boolean
   unitPrice?: boolean
+  selfPreviousReading?: boolean
+  selfCurrentReading?: boolean
+  selfUsage?: boolean
+  selfAmount?: boolean
+  peerPreviousReading?: boolean
+  peerCurrentReading?: boolean
+  peerUsage?: boolean
+  peerAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["bill"]>
@@ -556,6 +804,14 @@ export type BillSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   amount?: boolean
   usage?: boolean
   unitPrice?: boolean
+  selfPreviousReading?: boolean
+  selfCurrentReading?: boolean
+  selfUsage?: boolean
+  selfAmount?: boolean
+  peerPreviousReading?: boolean
+  peerCurrentReading?: boolean
+  peerUsage?: boolean
+  peerAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["bill"]>
@@ -569,11 +825,19 @@ export type BillSelectScalar = {
   amount?: boolean
   usage?: boolean
   unitPrice?: boolean
+  selfPreviousReading?: boolean
+  selfCurrentReading?: boolean
+  selfUsage?: boolean
+  selfAmount?: boolean
+  peerPreviousReading?: boolean
+  peerCurrentReading?: boolean
+  peerUsage?: boolean
+  peerAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BillOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "year" | "month" | "amount" | "usage" | "unitPrice" | "createdAt" | "updatedAt", ExtArgs["result"]["bill"]>
+export type BillOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "year" | "month" | "amount" | "usage" | "unitPrice" | "selfPreviousReading" | "selfCurrentReading" | "selfUsage" | "selfAmount" | "peerPreviousReading" | "peerCurrentReading" | "peerUsage" | "peerAmount" | "createdAt" | "updatedAt", ExtArgs["result"]["bill"]>
 
 export type $BillPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Bill"
@@ -587,6 +851,14 @@ export type $BillPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     amount: runtime.Decimal
     usage: runtime.Decimal
     unitPrice: runtime.Decimal | null
+    selfPreviousReading: runtime.Decimal | null
+    selfCurrentReading: runtime.Decimal | null
+    selfUsage: runtime.Decimal | null
+    selfAmount: runtime.Decimal | null
+    peerPreviousReading: runtime.Decimal | null
+    peerCurrentReading: runtime.Decimal | null
+    peerUsage: runtime.Decimal | null
+    peerAmount: runtime.Decimal | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["bill"]>
@@ -1020,6 +1292,14 @@ export interface BillFieldRefs {
   readonly amount: Prisma.FieldRef<"Bill", 'Decimal'>
   readonly usage: Prisma.FieldRef<"Bill", 'Decimal'>
   readonly unitPrice: Prisma.FieldRef<"Bill", 'Decimal'>
+  readonly selfPreviousReading: Prisma.FieldRef<"Bill", 'Decimal'>
+  readonly selfCurrentReading: Prisma.FieldRef<"Bill", 'Decimal'>
+  readonly selfUsage: Prisma.FieldRef<"Bill", 'Decimal'>
+  readonly selfAmount: Prisma.FieldRef<"Bill", 'Decimal'>
+  readonly peerPreviousReading: Prisma.FieldRef<"Bill", 'Decimal'>
+  readonly peerCurrentReading: Prisma.FieldRef<"Bill", 'Decimal'>
+  readonly peerUsage: Prisma.FieldRef<"Bill", 'Decimal'>
+  readonly peerAmount: Prisma.FieldRef<"Bill", 'Decimal'>
   readonly createdAt: Prisma.FieldRef<"Bill", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Bill", 'DateTime'>
 }
