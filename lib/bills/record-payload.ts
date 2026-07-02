@@ -35,26 +35,31 @@ export type BillReadingSnapshot = {
   peerCurrentReading: number | null;
 };
 
-function roundCurrency(value: number) {
+export function roundBillDecimal(value: number) {
   return Math.round((value + Number.EPSILON) * 100) / 100;
 }
 
-function roundUnitPrice(value: number) {
+export function roundUnitPrice(value: number) {
   return Math.round((value + Number.EPSILON) * 10000) / 10000;
 }
 
 export function buildBillRecordPayload(
   input: BillRecordPayloadInput,
 ): BillRecordPayload {
-  const selfUsage = input.selfCurrentReading - input.selfPreviousReading;
-  const peerUsage = input.peerCurrentReading - input.peerPreviousReading;
-  const usage = selfUsage + peerUsage;
+  const selfPreviousReading = roundBillDecimal(input.selfPreviousReading);
+  const selfCurrentReading = roundBillDecimal(input.selfCurrentReading);
+  const peerPreviousReading = roundBillDecimal(input.peerPreviousReading);
+  const peerCurrentReading = roundBillDecimal(input.peerCurrentReading);
+  const amount = roundBillDecimal(input.totalAmount);
+  const selfUsage = roundBillDecimal(selfCurrentReading - selfPreviousReading);
+  const peerUsage = roundBillDecimal(peerCurrentReading - peerPreviousReading);
+  const usage = roundBillDecimal(selfUsage + peerUsage);
 
   if (selfUsage < 0 || peerUsage < 0) {
     throw new Error("current reading must be greater than previous reading");
   }
 
-  if (input.totalAmount <= 0) {
+  if (amount <= 0) {
     throw new Error("total amount must be greater than 0");
   }
 
@@ -62,24 +67,24 @@ export function buildBillRecordPayload(
     throw new Error("total usage must be greater than 0");
   }
 
-  const unitPrice = input.totalAmount / usage;
-  const selfAmount = roundCurrency(selfUsage * unitPrice);
+  const unitPrice = amount / usage;
+  const selfAmount = roundBillDecimal(selfUsage * unitPrice);
 
   return {
     type: input.type,
     year: input.year,
     month: input.month,
-    amount: input.totalAmount,
+    amount,
     usage,
     unitPrice: roundUnitPrice(unitPrice),
-    selfPreviousReading: input.selfPreviousReading,
-    selfCurrentReading: input.selfCurrentReading,
+    selfPreviousReading,
+    selfCurrentReading,
     selfUsage,
     selfAmount,
-    peerPreviousReading: input.peerPreviousReading,
-    peerCurrentReading: input.peerCurrentReading,
+    peerPreviousReading,
+    peerCurrentReading,
     peerUsage,
-    peerAmount: roundCurrency(input.totalAmount - selfAmount),
+    peerAmount: roundBillDecimal(amount - selfAmount),
   };
 }
 

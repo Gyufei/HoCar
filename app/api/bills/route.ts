@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { roundBillDecimal, roundUnitPrice } from "@/lib/bills/record-payload";
 import { prisma } from "@/lib/prisma";
 
 const billCreateSchema = z.object({
@@ -123,17 +124,17 @@ export async function POST(req: NextRequest) {
     const userId = getUserIdFromEnv();
 
     const billData = {
-      amount,
-      usage,
-      unitPrice: unitPrice ?? null,
-      selfPreviousReading,
-      selfCurrentReading,
-      selfUsage,
-      selfAmount,
-      peerPreviousReading,
-      peerCurrentReading,
-      peerUsage,
-      peerAmount,
+      amount: roundBillDecimal(amount),
+      usage: roundBillDecimal(usage),
+      unitPrice: unitPrice == null ? null : roundUnitPrice(unitPrice),
+      selfPreviousReading: roundBillDecimal(selfPreviousReading),
+      selfCurrentReading: roundBillDecimal(selfCurrentReading),
+      selfUsage: roundBillDecimal(selfUsage),
+      selfAmount: roundBillDecimal(selfAmount),
+      peerPreviousReading: roundBillDecimal(peerPreviousReading),
+      peerCurrentReading: roundBillDecimal(peerCurrentReading),
+      peerUsage: roundBillDecimal(peerUsage),
+      peerAmount: roundBillDecimal(peerAmount),
     };
 
     const bill = await prisma.bill.upsert({

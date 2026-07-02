@@ -33,6 +33,35 @@ assert.deepEqual(payload, {
   peerAmount: 80,
 });
 
+assert.deepEqual(
+  buildBillRecordPayload({
+    type: "WATER",
+    year: 2026,
+    month: 7,
+    selfPreviousReading: 0.1,
+    selfCurrentReading: 0.4,
+    peerPreviousReading: 1.2,
+    peerCurrentReading: 1.5,
+    totalAmount: 0.9,
+  }),
+  {
+    type: "WATER",
+    year: 2026,
+    month: 7,
+    amount: 0.9,
+    usage: 0.6,
+    unitPrice: 1.5,
+    selfPreviousReading: 0.1,
+    selfCurrentReading: 0.4,
+    selfUsage: 0.3,
+    selfAmount: 0.45,
+    peerPreviousReading: 1.2,
+    peerCurrentReading: 1.5,
+    peerUsage: 0.3,
+    peerAmount: 0.45,
+  },
+);
+
 assert.throws(
   () =>
     buildBillRecordPayload({

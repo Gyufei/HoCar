@@ -91,7 +91,7 @@ export function AppSidebar() {
       <SidebarFooter className="border-t border-border/40 bg-muted/10 p-3 backdrop-blur-sm">
         <Button
           type="button"
-          variant="destructive"
+          variant="ghost"
           className="w-full justify-start text-sidebar-foreground"
           onClick={() => void signOut({ callbackUrl: "/login" })}
         >

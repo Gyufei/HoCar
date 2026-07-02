@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { roundBillDecimal, roundUnitPrice } from "@/lib/bills/record-payload";
 import { prisma } from "@/lib/prisma";
 
 const billUpdateSchema = z.object({
@@ -26,6 +27,10 @@ function getUserIdFromEnv(): string {
     throw new Error("SINGLE_USER_ID is not set");
   }
   return userId;
+}
+
+function roundOptionalBillDecimal(value: number | undefined) {
+  return value === undefined ? undefined : roundBillDecimal(value);
 }
 
 export async function PATCH(
@@ -61,12 +66,42 @@ export async function PATCH(
 
   try {
     const userId = getUserIdFromEnv();
+    const {
+      amount,
+      usage,
+      unitPrice,
+      selfPreviousReading,
+      selfCurrentReading,
+      selfUsage,
+      selfAmount,
+      peerPreviousReading,
+      peerCurrentReading,
+      peerUsage,
+      peerAmount,
+      year,
+      month,
+    } = parsedBody.data;
+
     const bill = await prisma.bill.update({
       where: {
         id: parsedId.data,
         userId,
       },
-      data: parsedBody.data,
+      data: {
+        amount: roundOptionalBillDecimal(amount),
+        usage: roundOptionalBillDecimal(usage),
+        unitPrice: unitPrice == null ? unitPrice : roundUnitPrice(unitPrice),
+        selfPreviousReading: roundOptionalBillDecimal(selfPreviousReading),
+        selfCurrentReading: roundOptionalBillDecimal(selfCurrentReading),
+        selfUsage: roundOptionalBillDecimal(selfUsage),
+        selfAmount: roundOptionalBillDecimal(selfAmount),
+        peerPreviousReading: roundOptionalBillDecimal(peerPreviousReading),
+        peerCurrentReading: roundOptionalBillDecimal(peerCurrentReading),
+        peerUsage: roundOptionalBillDecimal(peerUsage),
+        peerAmount: roundOptionalBillDecimal(peerAmount),
+        year,
+        month,
+      },
     });
 
     return NextResponse.json({ success: true, data: bill });
