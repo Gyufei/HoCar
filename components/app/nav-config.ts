@@ -1,4 +1,5 @@
 import {
+  Clipboard,
   Droplets,
   GalleryHorizontalEnd,
   Home,
@@ -28,6 +29,10 @@ export const navGroups = [
     ],
   },
   {
+    label: "工具",
+    items: [{ title: "共享剪切板", href: "/clipboard", icon: Clipboard }],
+  },
+  {
     label: "系统",
     items: [{ title: "系统设置", href: "/settings", icon: Settings }],
   },
@@ -45,6 +50,12 @@ export const moduleCards = [
     description: "预留你的个人图片托管入口。",
     href: "/images",
     icon: Image,
+  },
+  {
+    title: "共享剪切板",
+    description: "临时文本跨设备传递。",
+    href: "/clipboard",
+    icon: Clipboard,
   },
   {
     title: "个人 Demo",

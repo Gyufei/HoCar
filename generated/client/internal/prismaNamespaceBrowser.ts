@@ -51,7 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Bill: 'Bill'
+  Bill: 'Bill',
+  ClipboardEntry: 'ClipboardEntry'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -92,6 +93,18 @@ export const BillScalarFieldEnum = {
 } as const
 
 export type BillScalarFieldEnum = (typeof BillScalarFieldEnum)[keyof typeof BillScalarFieldEnum]
+
+
+export const ClipboardEntryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  key: 'key',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ClipboardEntryScalarFieldEnum = (typeof ClipboardEntryScalarFieldEnum)[keyof typeof ClipboardEntryScalarFieldEnum]
 
 
 export const SortOrder = {
