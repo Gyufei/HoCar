@@ -9,4 +9,5 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Bill'
+export type * from './models/ClipboardEntry'
 export type * from './commonInputTypes'

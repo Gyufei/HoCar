@@ -46,3 +46,8 @@ export { Prisma }
  * 
  */
 export type Bill = Prisma.BillModel
+/**
+ * Model ClipboardEntry
+ * 
+ */
+export type ClipboardEntry = Prisma.ClipboardEntryModel

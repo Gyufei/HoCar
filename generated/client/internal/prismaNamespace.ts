@@ -384,7 +384,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  Bill: 'Bill'
+  Bill: 'Bill',
+  ClipboardEntry: 'ClipboardEntry'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,7 +401,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "bill"
+    modelProps: "bill" | "clipboardEntry"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -478,6 +479,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ClipboardEntry: {
+      payload: Prisma.$ClipboardEntryPayload<ExtArgs>
+      fields: Prisma.ClipboardEntryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ClipboardEntryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ClipboardEntryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload>
+        }
+        findFirst: {
+          args: Prisma.ClipboardEntryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ClipboardEntryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload>
+        }
+        findMany: {
+          args: Prisma.ClipboardEntryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload>[]
+        }
+        create: {
+          args: Prisma.ClipboardEntryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload>
+        }
+        createMany: {
+          args: Prisma.ClipboardEntryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ClipboardEntryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload>[]
+        }
+        delete: {
+          args: Prisma.ClipboardEntryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload>
+        }
+        update: {
+          args: Prisma.ClipboardEntryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload>
+        }
+        deleteMany: {
+          args: Prisma.ClipboardEntryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ClipboardEntryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ClipboardEntryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload>[]
+        }
+        upsert: {
+          args: Prisma.ClipboardEntryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClipboardEntryPayload>
+        }
+        aggregate: {
+          args: Prisma.ClipboardEntryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateClipboardEntry>
+        }
+        groupBy: {
+          args: Prisma.ClipboardEntryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClipboardEntryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ClipboardEntryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClipboardEntryCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -539,6 +614,18 @@ export const BillScalarFieldEnum = {
 } as const
 
 export type BillScalarFieldEnum = (typeof BillScalarFieldEnum)[keyof typeof BillScalarFieldEnum]
+
+
+export const ClipboardEntryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  key: 'key',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ClipboardEntryScalarFieldEnum = (typeof ClipboardEntryScalarFieldEnum)[keyof typeof ClipboardEntryScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -750,6 +837,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   bill?: Prisma.BillOmit
+  clipboardEntry?: Prisma.ClipboardEntryOmit
 }
 
 /* Types for Logging */
