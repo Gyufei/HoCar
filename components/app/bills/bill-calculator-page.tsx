@@ -2,6 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Calculator, RotateCcw, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 import { PageHeader } from "@/components/app/page-header";
 import { Button } from "@/components/ui/button";
@@ -491,80 +498,51 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
                   暂无记录。完成计算后会自动保存到这里。
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[1120px] text-sm">
-                    <thead className="border-b text-left text-muted-foreground">
-                      <tr>
-                        <th className="py-2 pr-4 font-medium">月份</th>
-                        <th className="py-2 pr-4 font-medium">总金额</th>
-                        <th className="py-2 pr-4 font-medium">总用量</th>
-                        <th className="py-2 pr-4 font-medium">我家读数</th>
-                        <th className="py-2 pr-4 font-medium">我家用量</th>
-                        <th className="py-2 pr-4 font-medium">我家费用</th>
-                        <th className="py-2 pr-4 font-medium">对家读数</th>
-                        <th className="py-2 pr-4 font-medium">对家用量</th>
-                        <th className="py-2 pr-4 font-medium">对家费用</th>
-                        <th className="py-2 pr-4 font-medium">保存时间</th>
-                        <th className="py-2 text-right font-medium">操作</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {history.map((item) => (
-                        <tr key={item.id}>
-                          <td className="py-3 pr-4">
-                            {item.year} 年 {item.month} 月
-                          </td>
-                          <td className="py-3 pr-4">
-                            ¥{formatCurrency(item.amount)}
-                          </td>
-                          <td className="py-3 pr-4">
-                            {item.usage} {config.usageUnit}
-                          </td>
-                          <td className="py-3 pr-4">
-                            {formatReadingRange(
-                              item.selfPreviousReading,
-                              item.selfCurrentReading,
-                              config.usageUnit,
-                            )}
-                          </td>
-                          <td className="py-3 pr-4">
-                            {formatNullableUsage(item.selfUsage, config.usageUnit)}
-                          </td>
-                          <td className="py-3 pr-4">
-                            {formatNullableCurrency(item.selfAmount)}
-                          </td>
-                          <td className="py-3 pr-4">
-                            {formatReadingRange(
-                              item.peerPreviousReading,
-                              item.peerCurrentReading,
-                              config.usageUnit,
-                            )}
-                          </td>
-                          <td className="py-3 pr-4">
-                            {formatNullableUsage(item.peerUsage, config.usageUnit)}
-                          </td>
-                          <td className="py-3 pr-4">
-                            {formatNullableCurrency(item.peerAmount)}
-                          </td>
-                          <td className="py-3 pr-4 text-muted-foreground">
-                            {formatDate(item.createdAt)}
-                          </td>
-                          <td className="py-3 text-right">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon-sm"
-                              aria-label="删除记录"
-                              onClick={() => void handleDelete(item.id)}
-                            >
-                              <Trash2 className="size-4" />
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <Accordion type="single" collapsible>
+                  {history.map((item) => (
+                    <AccordionItem key={item.id} value={item.id}>
+                      <AccordionTrigger>
+                        <span className="flex-1 text-left font-medium">
+                          {item.year}/{item.month} ¥{formatNullableCurrency(item.selfAmount)}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon-sm"
+                          aria-label="删除记录"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void handleDelete(item.id);
+                          }}
+                        >
+                          <Trash2 className="size-3.5" />
+                        </Button>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
+                          <DetailRow label="总金额" value={`¥${formatCurrency(item.amount)}`} />
+                          <DetailRow label="总用量" value={`${item.usage} ${config.usageUnit}`} />
+                          
+                          <div className="col-span-full border-t border-border/40 pt-2" />
+                          
+                          <DetailRow label="我家读数" value={formatReadingRange(item.selfPreviousReading, item.selfCurrentReading, config.usageUnit)} highlight="self" />
+                          <DetailRow label="我家用量" value={formatNullableUsage(item.selfUsage, config.usageUnit)} highlight="self" />
+                          <DetailRow className="sm:col-span-full" label="我家费用" value={formatNullableCurrency(item.selfAmount)} highlight="self" />
+                          
+                          <div className="col-span-full border-t border-border/40 pt-2" />
+                          
+                          <DetailRow label="对家读数" value={formatReadingRange(item.peerPreviousReading, item.peerCurrentReading, config.usageUnit)} highlight="peer" />
+                          <DetailRow label="对家用量" value={formatNullableUsage(item.peerUsage, config.usageUnit)} highlight="peer" />
+                          <DetailRow className="sm:col-span-full" label="对家费用" value={formatNullableCurrency(item.peerAmount)} highlight="peer" />
+                          
+                          <div className="col-span-full border-t border-border/40 pt-2" />
+                          
+                          <DetailRow className="sm:col-span-full" label="保存时间" value={formatDate(item.createdAt)} />
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
               )}
             </CardContent>
           </Card>
@@ -586,7 +564,7 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
                     <ResultRow label="对家用量" value={`${results.usageB} ${config.usageUnit}`} />
                     <ResultRow label="总用量" value={`${results.totalUsage} ${config.usageUnit}`} />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-2">
                       <Label htmlFor="bill-year">年份</Label>
                       <Input
@@ -629,6 +607,34 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
         </aside>
       </div>
     </>
+  );
+}
+
+function DetailRow({
+  label,
+  value,
+  highlight,
+  className,
+}: {
+  label: string;
+  value: string;
+  highlight?: "self" | "peer";
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex items-center justify-between gap-2", className)}>
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span
+        className={cn(
+          "text-sm font-medium tabular-nums",
+          highlight === "self" && "text-sky-700 dark:text-sky-400",
+          highlight === "peer" && "text-amber-700 dark:text-amber-400",
+          !highlight && "text-foreground",
+        )}
+      >
+        {value}
+      </span>
+    </div>
   );
 }
 
