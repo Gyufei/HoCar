@@ -42,3 +42,6 @@ next-env.d.ts
 
 # local brainstorming mockups
 .superpowers/
+
+# local git worktrees
+.worktrees/
