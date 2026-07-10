@@ -503,7 +503,7 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
                     <AccordionItem key={item.id} value={item.id}>
                       <AccordionTrigger>
                         <span className="flex-1 text-left font-medium">
-                          {item.year}/{item.month} ¥{formatNullableCurrency(item.selfAmount)}
+                          {item.year}/{item.month} {item.selfAmount != null ? `¥${formatCurrency(item.selfAmount)}` : ""}
                         </span>
                         <Button
                           type="button"
@@ -527,13 +527,13 @@ export function BillCalculatorPage({ config }: { config: BillKindConfig }) {
                           
                           <DetailRow label="我家读数" value={formatReadingRange(item.selfPreviousReading, item.selfCurrentReading, config.usageUnit)} highlight="self" />
                           <DetailRow label="我家用量" value={formatNullableUsage(item.selfUsage, config.usageUnit)} highlight="self" />
-                          <DetailRow className="sm:col-span-full" label="我家费用" value={formatNullableCurrency(item.selfAmount)} highlight="self" />
+                          <DetailRow label="我家费用" value={formatNullableCurrency(item.selfAmount)} highlight="self" />
                           
                           <div className="col-span-full border-t border-border/40 pt-2" />
                           
                           <DetailRow label="对家读数" value={formatReadingRange(item.peerPreviousReading, item.peerCurrentReading, config.usageUnit)} highlight="peer" />
                           <DetailRow label="对家用量" value={formatNullableUsage(item.peerUsage, config.usageUnit)} highlight="peer" />
-                          <DetailRow className="sm:col-span-full" label="对家费用" value={formatNullableCurrency(item.peerAmount)} highlight="peer" />
+                          <DetailRow label="对家费用" value={formatNullableCurrency(item.peerAmount)} highlight="peer" />
                           
                           <div className="col-span-full border-t border-border/40 pt-2" />
                           
