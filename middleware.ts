@@ -10,5 +10,6 @@ export const config = {
     "/settings/:path*",
     "/api/bills/:path*",
     "/api/clipboard/:path*",
+    "/api/images/:path*",
   ],
 };
