@@ -7,14 +7,19 @@ import {
   Check,
   Trash2,
   Loader2,
-  ChevronLeft,
-  ChevronRight,
   ImageIcon,
 } from "lucide-react";
 
 import { PageHeader } from "@/components/app/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 // Types
 
@@ -54,7 +59,12 @@ type HistoryResp = {
   CurrentPage: number;
   TotalPages: number;
   PerPage: number;
+  Total?: number;
 };
+
+// Constants
+
+const PER_PAGE = 10;
 
 // Helpers
 
@@ -86,13 +96,18 @@ export default function ImagesPage() {
   // History state
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [historyLoading, setHistoryLoading] = useState(true);
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [deletingHash, setDeletingHash] = useState<string | null>(null);
 
   // Copy feedback
   const [copied, setCopied] = useState<string | null>(null);
+
+  // Derived pagination values
+  const totalPages = Math.max(1, Math.ceil(totalItems / PER_PAGE));
+  const pageStart = (currentPage - 1) * PER_PAGE;
+  const displayItems = history.slice(pageStart, pageStart + PER_PAGE);
 
   // ---- Upload logic ----
 
@@ -130,15 +145,28 @@ export default function ImagesPage() {
         // clipboard not available, silently skip
       }
 
-      // Refresh history
-      fetchHistory(1);
+      // Refresh history and reset to page 1
       setCurrentPage(1);
+      fetchHistory(1);
     } catch {
       setUploadError("上传请求失败，请检查网络");
     } finally {
       setUploading(false);
     }
   }, []);
+
+  // ---- Page change handler ----
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      if (page < 1 || page > totalPages) return;
+      setCurrentPage(page);
+      // Calculate which s.ee page to fetch
+      const seePage = Math.ceil((page * PER_PAGE) / 30);
+      fetchHistory(seePage);
+    },
+    [totalPages]
+  );
 
   // ---- Drag & drop handlers ----
 
@@ -170,7 +198,6 @@ export default function ImagesPage() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (file) uploadFile(file);
-      // Reset so selecting the same file again triggers onChange
       e.target.value = "";
     },
     [uploadFile]
@@ -203,7 +230,7 @@ export default function ImagesPage() {
       }
 
       setHistory(json.data || []);
-      setTotalPages(json.TotalPages || 1);
+      setTotalItems(json.Total ?? json.data?.length ?? 0);
     } catch {
       setHistoryError("获取历史记录失败，请检查网络");
     } finally {
@@ -212,8 +239,9 @@ export default function ImagesPage() {
   }, []);
 
   useEffect(() => {
-    fetchHistory(currentPage);
-  }, [currentPage, fetchHistory]);
+    fetchHistory(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDelete = useCallback(
     async (hash: string) => {
@@ -229,15 +257,15 @@ export default function ImagesPage() {
           return;
         }
 
-        // Refresh current page
-        fetchHistory(currentPage);
+        const seePage = Math.ceil((currentPage * PER_PAGE) / 30);
+        fetchHistory(seePage);
       } catch {
         alert("删除请求失败，请检查网络");
       } finally {
         setDeletingHash(null);
       }
     },
-    [currentPage, fetchHistory]
+    [currentPage]
   );
 
   // ---- Render helpers ----
@@ -289,14 +317,19 @@ export default function ImagesPage() {
     return (
       <div className="mt-4 rounded-xl border border-border/70 bg-card p-4">
         <div className="flex gap-4">
-          {/* Preview */}
-          <div className="size-24 shrink-0 overflow-hidden rounded-lg border bg-muted/30">
+          {/* Preview - clickable to open in new tab */}
+          <a
+            href={d.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="size-24 shrink-0 overflow-hidden rounded-lg border bg-muted/30"
+          >
             <img
               src={d.url}
               alt={d.filename}
               className="size-full object-cover"
             />
-          </div>
+          </a>
 
           {/* Info */}
           <div className="min-w-0 flex-1 space-y-1.5">
@@ -353,7 +386,7 @@ export default function ImagesPage() {
     );
   };
 
-  const renderHistory = () => {
+  const renderHistoryList = () => {
     if (historyLoading) {
       return (
         <div className="flex items-center justify-center py-16">
@@ -380,91 +413,103 @@ export default function ImagesPage() {
     }
 
     return (
-      <>
-        <div className="divide-y divide-border/50">
-          {history.map((item) => {
-            const md = `![](${item.url})`;
-            return (
-              <div
-                key={item.hash}
-                className="flex items-center gap-3 px-2 py-3"
+      <div className="divide-y divide-border/50">
+        {displayItems.map((item) => {
+          const md = `![](${item.url})`;
+          return (
+            <div
+              key={item.hash}
+              className="flex items-center gap-3 px-2 py-3"
+            >
+              {/* Thumbnail - clickable to open in new tab */}
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="size-10 shrink-0 overflow-hidden rounded-md border bg-muted/30"
               >
-                {/* Thumbnail */}
-                <div className="size-10 shrink-0 overflow-hidden rounded-md border bg-muted/30">
-                  <img
-                    src={item.url}
-                    alt={item.filename}
-                    className="size-full object-cover"
-                  />
-                </div>
+                <img
+                  src={item.url}
+                  alt={item.filename}
+                  className="size-full object-cover"
+                />
+              </a>
 
-                {/* Info */}
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm">{item.filename}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatSize(item.size)}
-                    {item.width ? ` · ${item.width}×${item.height}` : ""}
-                    {item.created_at ? ` · ${formatTs(item.created_at)}` : ""}
-                  </p>
-                </div>
-
-                {/* Actions */}
-                <div className="flex shrink-0 items-center gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    onClick={() => handleCopy(md, `md-${item.hash}`)}
-                  >
-                    {copied === `md-${item.hash}` ? (
-                      <Check className="size-3 text-success" />
-                    ) : (
-                      <Copy className="size-3" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    className="text-muted-foreground hover:text-destructive"
-                    disabled={deletingHash === item.hash}
-                    onClick={() => handleDelete(item.hash)}
-                  >
-                    {deletingHash === item.hash ? (
-                      <Loader2 className="size-3 animate-spin" />
-                    ) : (
-                      <Trash2 className="size-3" />
-                    )}
-                  </Button>
-                </div>
+              {/* Info */}
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm">{item.filename}</p>
+                <p className="text-xs text-muted-foreground">
+                  {formatSize(item.size)}
+                  {item.width ? ` · ${item.width}×${item.height}` : ""}
+                  {item.created_at ? ` · ${formatTs(item.created_at)}` : ""}
+                </p>
               </div>
-            );
-          })}
-        </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 border-t border-border/50 px-2 py-3">
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              disabled={currentPage <= 1}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            >
-              <ChevronLeft className="size-4" />
-            </Button>
-            <span className="text-xs tabular-nums text-muted-foreground">
-              {currentPage} / {totalPages}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              disabled={currentPage >= totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-            >
-              <ChevronRight className="size-4" />
-            </Button>
-          </div>
-        )}
-      </>
+              {/* Actions */}
+              <div className="flex shrink-0 items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => handleCopy(md, `md-${item.hash}`)}
+                >
+                  {copied === `md-${item.hash}` ? (
+                    <Check className="size-3 text-success" />
+                  ) : (
+                    <Copy className="size-3" />
+                  )}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  className="text-muted-foreground hover:text-destructive"
+                  disabled={deletingHash === item.hash}
+                  onClick={() => handleDelete(item.hash)}
+                >
+                  {deletingHash === item.hash ? (
+                    <Loader2 className="size-3 animate-spin" />
+                  ) : (
+                    <Trash2 className="size-3" />
+                  )}
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="border-t border-border/50 px-2 py-3">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => handlePageChange(currentPage - 1)}
+                text="上一页"
+                className={currentPage <= 1 ? "pointer-events-none opacity-40" : ""}
+              />
+            </PaginationItem>
+            <PaginationItem>
+              <span className="px-3 text-xs tabular-nums text-muted-foreground">
+                {currentPage} / {totalPages}
+              </span>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => handlePageChange(currentPage + 1)}
+                text="下一页"
+                className={
+                  currentPage >= totalPages ? "pointer-events-none opacity-40" : ""
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
     );
   };
 
@@ -498,7 +543,8 @@ export default function ImagesPage() {
           <ImageIcon className="size-4 text-primary" />
           <h2 className="text-sm font-medium">上传历史</h2>
         </div>
-        {renderHistory()}
+        {renderHistoryList()}
+        {renderPagination()}
       </Card>
     </>
   );
