@@ -26,7 +26,7 @@ export default function ClipboardPage() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch("/api/clipboard");
+      const res = await fetch("/api/cp");
       const json = await res.json();
       if (json.success) {
         const data = json.data as ClipboardData;
@@ -53,7 +53,7 @@ export default function ClipboardPage() {
     setSaving(true);
     setMessage(null);
     try {
-      const res = await fetch("/api/clipboard", {
+      const res = await fetch("/api/cp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content }),

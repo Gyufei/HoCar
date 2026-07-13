@@ -30,7 +30,7 @@ export const navGroups = [
   },
   {
     label: "工具",
-    items: [{ title: "共享剪切板", href: "/clipboard", icon: Clipboard }],
+    items: [{ title: "共享剪切板", href: "/cp", icon: Clipboard }],
   },
   {
     label: "系统",
@@ -54,7 +54,7 @@ export const moduleCards = [
   {
     title: "共享剪切板",
     description: "临时文本跨设备传递。",
-    href: "/clipboard",
+    href: "/cp",
     icon: Clipboard,
   },
   {
